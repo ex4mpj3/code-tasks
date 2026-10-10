@@ -40,6 +40,7 @@ def __get_string_count(target_string_length: int) -> int:
 
     return prev
 
+
 def main():
 
     correct_strings = ["01", "10", "11"]
