@@ -5,6 +5,24 @@ NEGATIVE_VALUE_TEMPL = "Параметр {0} отрицательный"
 N_LESS_THAN_K_ERROR_MSG = "Параметр n меньше чем k"
 
 
+def count_a(n: int) -> int:
+    if n == 1:
+        return 0
+    return count_b(n - 1) + count_c(n - 1)
+
+
+def count_b(n: int) -> int:
+    if n == 1:
+        return 1
+    return count_a(n - 1) + count_c(n - 1)
+
+
+def count_c(n: int) -> int:
+    if n == 1:
+        return 1
+    return count_a(n - 1) + count_b(n - 1)
+
+
 def get_triangle_path_count(length: int) -> int:
     """Возвращает число замкнутых маршрутов заданной длины
     из вершины A в вершину A треугольника ABC.
@@ -14,7 +32,24 @@ def get_triangle_path_count(length: int) -> int:
     :raise ValueError: если length меньше единицы
     :return: число маршрутов
     """
-    pass
+    if type(length) is not int:
+        raise TypeError(PATH_LENGTH_NOT_INT)
+    if length < 1:
+        raise ValueError(PATH_LENGTH_NOT_POS)
+    return count_a(length)
+
+
+def check_binomial_args(n: int, k: int) -> None:
+    if type(n) is not int:
+        raise TypeError(NOT_INT_VALUE_TEMPL.format("n"))
+    if type(k) is not int:
+        raise TypeError(NOT_INT_VALUE_TEMPL.format("k"))
+    if n < 0:
+        raise ValueError(NEGATIVE_VALUE_TEMPL.format("n"))
+    if k < 0:
+        raise ValueError(NEGATIVE_VALUE_TEMPL.format("k"))
+    if n < k:
+        raise ValueError(N_LESS_THAN_K_ERROR_MSG)
 
 
 def binomial_coefficient_iter(n: int, k: int) -> int:
@@ -26,7 +61,11 @@ def binomial_coefficient_iter(n: int, k: int) -> int:
     :raise ValueError: если n или k отрицательные либо n меньше k
     :return: значение биномиального коэффициента
     """
-    pass
+    check_binomial_args(n, k)
+    res = 1
+    for i in range(1, k + 1):
+        res = res * (n - k + i) // i
+    return res
 
 
 def binomial_coefficient_rec(n: int, k: int) -> int:
@@ -39,7 +78,10 @@ def binomial_coefficient_rec(n: int, k: int) -> int:
     :raise ValueError: если n или k отрицательные либо n меньше k
     :return: значение биномиального коэффициента
     """
-    pass
+    check_binomial_args(n, k)
+    if k == 0:
+        return 1
+    return n * binomial_coefficient_rec(n - 1, k - 1) // k
 
 
 def main():
