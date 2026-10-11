@@ -75,12 +75,6 @@ class TestBinomialCoefficient(unittest.TestCase):
                         self.assertEqual(func(n, 0), 1)
                         self.assertEqual(func(n, n), 1)
 
-    def test_n_menshe_k(self):
-        """test n<k"""
-        with self.assertRaises(ValueError) as error:
-            binomial_coefficient_iter(1, 2)
-        self.assertEqual(str(error.exception), N_LESS_THAN_K_ERROR_MSG)
-
     def test_n_less_than_k(self):
         """n меньше k"""
         with self.assertRaises(ValueError) as error:
