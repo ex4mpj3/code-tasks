@@ -14,7 +14,35 @@ def generate_strings(length: int) -> list[str]:
     :raise ValueError: если length меньше единицы
     :return: список строк
     """
-    pass
+    if isinstance(length, bool) or not isinstance(length, int):
+        raise TypeError(LENGTH_NOT_INT)
+    if length < 1:
+        raise ValueError(LENGTH_NOT_POS)
+    if length == 1:
+        return ["0", "1"]
+
+    # После начального нуля суффикс обязан начинаться с единицы.
+    return [
+        "0" + suffix for suffix in _strings_starting_with_one(length - 1)
+    ] + _strings_starting_with_one(length)
+
+
+def _strings_starting_with_one(length: int) -> list[str]:
+    """Возвращает допустимые строки длины length с начальной единицей."""
+    if length == 1:
+        return ["1"]
+    return ["1" + suffix for suffix in generate_strings(length - 1)]
+
+
+def _validate_binomial_arguments(n: int, k: int) -> None:
+    """Проверяет одинаковые ограничения для обеих реализаций."""
+    for name, value in (("n", n), ("k", k)):
+        if isinstance(value, bool) or not isinstance(value, int):
+            raise TypeError(NOT_INT_VALUE_TEMPL.format(name))
+        if value < 0:
+            raise ValueError(NEGATIVE_VALUE_TEMPL.format(name))
+    if n < k:
+        raise ValueError(N_LESS_THAN_K_ERROR_MSG)
 
 
 def binomial_coefficient_iter(n: int, k: int) -> int:
@@ -26,7 +54,17 @@ def binomial_coefficient_iter(n: int, k: int) -> int:
     :raise ValueError: если n или k отрицательные либо n меньше k
     :return: значение биномиального коэффициента
     """
-    pass
+    _validate_binomial_arguments(n, k)
+    if k == 0 or k == n:
+        return 1
+
+    # Начальная строка: C_0^0 = 1; в остальных столбцах сочетаний пока нет.
+    coefficients = [1] + [0] * k
+    for row in range(1, n + 1):
+        # Идём справа налево, чтобы оба слагаемых были из предыдущей строки.
+        for column in range(min(row, k), 0, -1):
+            coefficients[column] += coefficients[column - 1]
+    return coefficients[k]
 
 
 def binomial_coefficient_rec(n: int, k: int) -> int:
@@ -39,7 +77,10 @@ def binomial_coefficient_rec(n: int, k: int) -> int:
     :raise ValueError: если n или k отрицательные либо n меньше k
     :return: значение биномиального коэффициента
     """
-    pass
+    _validate_binomial_arguments(n, k)
+    if k == 0 or k == n:
+        return 1
+    return binomial_coefficient_rec(n - 1, k) + binomial_coefficient_rec(n - 1, k - 1)
 
 
 def main():
