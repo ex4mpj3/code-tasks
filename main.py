@@ -68,6 +68,14 @@ def binomial_coefficient_iter(n: int, k: int) -> int:
     return res
 
 
+def _binomial_rec(n: int, k: int) -> int:
+    """Рекурсивный расчёт C(n, k) без проверки аргументов,
+    аргументы проверяет binomial_coefficient_rec"""
+    if k == 0:
+        return 1
+    return n * _binomial_rec(n - 1, k - 1) // k
+
+
 def binomial_coefficient_rec(n: int, k: int) -> int:
     """Вычисляет биномиальный коэффициент из n по k рекурсивно
     по соотношению C(n, k) = (n / k) * C(n - 1, k - 1).
@@ -79,9 +87,7 @@ def binomial_coefficient_rec(n: int, k: int) -> int:
     :return: значение биномиального коэффициента
     """
     check_binomial_args(n, k)
-    if k == 0:
-        return 1
-    return n * binomial_coefficient_rec(n - 1, k - 1) // k
+    return _binomial_rec(n, k)
 
 
 def main():
