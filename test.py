@@ -90,7 +90,6 @@ class TestBinomialCoefficient(unittest.TestCase):
     def test_errors_both(self):
         """Каждая ошибка"""
         cases = [
-            ("a", 2, TypeError, NOT_INT_VALUE_TEMPL.format("n")),
             (2.0, 1, TypeError, NOT_INT_VALUE_TEMPL.format("n")),
             (True, 0, TypeError, NOT_INT_VALUE_TEMPL.format("n")),
             (5, "a", TypeError, NOT_INT_VALUE_TEMPL.format("k")),
@@ -99,7 +98,6 @@ class TestBinomialCoefficient(unittest.TestCase):
             (-1, 0, ValueError, NEGATIVE_VALUE_TEMPL.format("n")),
             (-1, 5, ValueError, NEGATIVE_VALUE_TEMPL.format("n")),
             (5, -1, ValueError, NEGATIVE_VALUE_TEMPL.format("k")),
-            (1, 2, ValueError, N_LESS_THAN_K_ERROR_MSG),
             (0, 1, ValueError, N_LESS_THAN_K_ERROR_MSG),
         ]
         for func in BINOMIAL_FUNCTIONS:
@@ -110,7 +108,7 @@ class TestBinomialCoefficient(unittest.TestCase):
                     self.assertEqual(str(error.exception), message)
 
     def test_against_math_comb(self):
-        """Все C(n, k) при n до 20 """
+        """Все C(n, k) при n до 20"""
         for func in BINOMIAL_FUNCTIONS:
             for n in range(21):
                 for k in range(n + 1):

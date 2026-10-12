@@ -9,7 +9,8 @@ N_LESS_THAN_K_ERROR_MSG = "Параметр n меньше чем k"
 
 
 def validate(n: Any, k: Any) -> None:
-    """Проводит валидацию для функций, работающих с биноминальным коэффициентом, вызывает ошибку при некорректных входящих данных"""
+    """Проводит валидацию для функций, работающих с биноминальным коэффициентом,
+     вызывает ошибку при некорректных входящих данных"""
     for name, val in (("n", n), ("k", k)):
         if type(val) is not int:
             raise TypeError(NOT_INT_VALUE_TEMPL.format(name))
@@ -34,20 +35,20 @@ def generate_strings(length: int) -> list[str]:
     if length < 1:
         raise ValueError(LENGTH_NOT_POS)
 
-    def starts_with_0(n: int) -> list[str]:
-        """Генерирует строки длины n, начинающиеся с '0'"""
+    def _starts_with_0(n: int) -> list[str]:
+        """Генерирует строки длины n, начинающиеся с 0"""
         if n == 1:
             return ["0"]
-        return ["0" + s for s in starts_with_1(n - 1)]
+        return ["0" + s for s in _starts_with_1(n - 1)]
 
-    def starts_with_1(n: int) -> list[str]:
-        """Генерирует строки длины n, начинающиеся с '1'"""
+    def _starts_with_1(n: int) -> list[str]:
+        """Генерирует строки длины n, начинающиеся с 1"""
         if n == 1:
             return ["1"]
-        tails = starts_with_0(n - 1) + starts_with_1(n - 1)
+        tails = _starts_with_0(n - 1) + _starts_with_1(n - 1)
         return ["1" + s for s in tails]
 
-    return starts_with_0(length) + starts_with_1(length)
+    return _starts_with_0(length) + _starts_with_1(length)
 
 
 def binomial_coefficient_iter(n: int, k: int) -> int:
@@ -84,12 +85,12 @@ def binomial_coefficient_rec(n: int, k: int) -> int:
     validate(n, k)
 
     @cache
-    def inner_recursion(n: int, k: int) -> int:
+    def _inner_recursion(n: int, k: int) -> int:
         if k in (0, n):
             return 1
-        return inner_recursion(n - 1, k - 1) + inner_recursion(n - 1, k)
+        return _inner_recursion(n - 1, k - 1) + _inner_recursion(n - 1, k)
 
-    return inner_recursion(n, k)
+    return _inner_recursion(n, k)
 
 
 def main():
