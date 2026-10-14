@@ -47,6 +47,11 @@ def binomial_coefficient_iter(n: int, k: int) -> int:
         result = result * (n - k + i) // i
     return result
 
+def _binomial_coefficient_rec_impl(n: int, k: int) -> int:
+    if k == 0:
+        return 1
+    return (n * _binomial_coefficient_rec_impl(n - 1, k - 1)) // k
+
 
 def binomial_coefficient_rec(n: int, k: int) -> int:
     """Вычисляет биномиальный коэффициент из n по k рекурсивно
@@ -58,7 +63,8 @@ def binomial_coefficient_rec(n: int, k: int) -> int:
     :raise ValueError: если n или k отрицательные либо n меньше k
     :return: значение биномиального коэффициента
     """
-    pass
+    _check_binomial_params(n, k)
+    return _binomial_coefficient_rec_impl(n, k)
 
 
 def main():
