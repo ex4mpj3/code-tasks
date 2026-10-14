@@ -20,6 +20,27 @@ def _check_binomial_params(n: int, k: int) -> None:
     if n < k:
         raise ValueError(N_LESS_THAN_K_ERROR_MSG)
 
+def _count_paths_to_a(length: int) -> int:
+    """Число маршрутов длины length из A в A (взаимная рекурсия)."""
+    if length == 1:
+        return 0
+    return _count_paths_to_b(length - 1) + _count_paths_to_c(length - 1)
+
+
+def _count_paths_to_b(length: int) -> int:
+    """Число маршрутов длины length из A в B (взаимная рекурсия)."""
+    if length == 1:
+        return 1
+    return _count_paths_to_a(length - 1) + _count_paths_to_c(length - 1)
+
+
+def _count_paths_to_c(length: int) -> int:
+    """Число маршрутов длины length из A в C (взаимная рекурсия)."""
+    if length == 1:
+        return 1
+    return _count_paths_to_a(length - 1) + _count_paths_to_b(length - 1)
+
+
 def get_triangle_path_count(length: int) -> int:
     """Возвращает число замкнутых маршрутов заданной длины
     из вершины A в вершину A треугольника ABC.
@@ -29,7 +50,11 @@ def get_triangle_path_count(length: int) -> int:
     :raise ValueError: если length меньше единицы
     :return: число маршрутов
     """
-    pass
+    if not _is_valid_int(length):
+        raise TypeError(PATH_LENGTH_NOT_INT)
+    if length < 1:
+        raise ValueError(PATH_LENGTH_NOT_POS)
+    return _count_paths_to_a(length)
 
 
 def binomial_coefficient_iter(n: int, k: int) -> int:
