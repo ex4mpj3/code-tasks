@@ -46,6 +46,12 @@ def f1(length, cur, res):
     f0(length, new_cur, res)
     f1(length, new_cur, res)
 
+def validate_strings(length):
+    if not isinstance(length, int) or isinstance(length, bool):
+        raise TypeError(LENGTH_NOT_INT)
+
+    if length < 1:
+        raise ValueError(LENGTH_NOT_POS)
 
 def binomial_coefficient_iter(n: int, k: int) -> int:
     """Вычисляет биномиальный коэффициент из n по k итеративно.
