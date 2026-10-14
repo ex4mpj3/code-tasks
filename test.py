@@ -71,6 +71,7 @@ class TestTrianglePath(unittest.TestCase):
                     _closed_path_count(length),
                 )
 
+
 class TestBinomialCoefficient(unittest.TestCase):
     """Набор тестов биномиального коэффициента"""
 
@@ -178,8 +179,8 @@ class TestBinomialCoefficient(unittest.TestCase):
             for n in range(21):
                 for k in range(n + 1):
                     with self.subTest(func=func.__name__, n=n, k=k):
-                        self.assertEqual(func(n, k), math.comb(n, k))   
-                         
+                        self.assertEqual(func(n, k), math.comb(n, k))
+
 
 if __name__ == "__main__":
     unittest.main()
