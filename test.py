@@ -142,7 +142,6 @@ class TestBinomialCoefficient(unittest.TestCase):
         cases = [
             ((-1, -2), ValueError, NEGATIVE_VALUE_TEMPL.format("n")),
             (("a", "b"), TypeError, NOT_INT_VALUE_TEMPL.format("n")),
-            ((None, 1), TypeError, NOT_INT_VALUE_TEMPL.format("n")),
             ((1.5, 0.5), TypeError, NOT_INT_VALUE_TEMPL.format("n")),
         ]
         for func in BINOMIAL_FUNCTIONS:
@@ -151,6 +150,17 @@ class TestBinomialCoefficient(unittest.TestCase):
                     with self.assertRaises(exc_type) as error:
                         func(*args)
                     self.assertEqual(str(error.exception), msg)
+
+    def test_n_is_none(self):
+        """n равно None"""
+        for func in BINOMIAL_FUNCTIONS:
+            with self.subTest(func=func.__name__):
+                with self.assertRaises(TypeError) as error:
+                    func(None, 1)
+                self.assertEqual(
+                    str(error.exception),
+                    NOT_INT_VALUE_TEMPL.format("n"),
+                )
 
     def test_edge_cases(self):
         """Краевые случаи: C(0,0), C(n,0), C(n,n)"""
@@ -162,10 +172,11 @@ class TestBinomialCoefficient(unittest.TestCase):
 
     def test_regular_values(self):
         """Обычные значения"""
+        cases = [(6, 3, 20), (15, 7, 6435)]
         for func in BINOMIAL_FUNCTIONS:
-            with self.subTest(func=func.__name__):
-                self.assertEqual(func(6, 3), 20)
-                self.assertEqual(func(15, 7), 6435)
+            for n, k, expected in cases:
+                with self.subTest(func=func.__name__, n=n, k=k):
+                    self.assertEqual(func(n, k), expected)
 
     def test_larger_values(self):
         """Большие значения"""
