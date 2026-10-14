@@ -57,6 +57,15 @@ class TestDynamicSolver(unittest.TestCase):
         self.assertEqual(result.cost, 3)
         self.assertTrue(check_knapsack_items(weights, costs, weight_limit, result))
 
+    def test_example_from_main(self):
+        """Пример из main.py"""
+        weights = [11, 4, 8, 6, 3, 5, 5]
+        costs = [17, 6, 11, 10, 5, 8, 6]
+        weight_limit = 30
+        result = DynamicSolver(weights, costs, weight_limit).get_knapsack()
+        self.assertEqual(result.cost, 46)
+        self.assertTrue(check_knapsack_items(weights, costs, weight_limit, result))
+
     def test_not_list_weights(self):
         """Веса не список"""
         with self.assertRaises(TypeError) as error:
