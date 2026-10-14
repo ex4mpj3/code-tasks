@@ -14,7 +14,38 @@ def generate_strings(length: int) -> list[str]:
     :raise ValueError: если length меньше единицы
     :return: список строк
     """
-    pass
+    if type(length) is not int:
+        raise TypeError(LENGTH_NOT_INT)
+    if length < 1:
+        raise ValueError(LENGTH_NOT_POS)
+
+    result: list[str] = []
+    
+    def can_write_zero(prefix: str) -> None:
+        if len(prefix) == length:
+            result.append(prefix)
+            return
+        must_write_one(prefix + "0")
+        can_write_zero(prefix + "1")
+
+    def must_write_one(prefix: str) -> None:
+        if len(prefix) == length:
+            result.append(prefix)
+            return
+        can_write_zero(prefix + "1")
+
+    can_write_zero("")
+    return result
+
+
+def _validate_binomial_args(n: int, k: int) -> None:
+    for name, value in (("n", n), ("k", k)):
+        if type(value) is not int:
+            raise TypeError(NOT_INT_VALUE_TEMPL.format(name))
+        if value < 0:
+            raise ValueError(NEGATIVE_VALUE_TEMPL.format(name))
+    if n < k:
+        raise ValueError(N_LESS_THAN_K_ERROR_MSG)
 
 
 def binomial_coefficient_iter(n: int, k: int) -> int:
@@ -26,7 +57,12 @@ def binomial_coefficient_iter(n: int, k: int) -> int:
     :raise ValueError: если n или k отрицательные либо n меньше k
     :return: значение биномиального коэффициента
     """
-    pass
+    _validate_binomial_args(n, k)
+    row = [1] + [0] * k
+    for i in range(1, n + 1):
+        for j in range(min(i, k), 0, -1):
+            row[j] += row[j - 1]
+    return row[k]
 
 
 def binomial_coefficient_rec(n: int, k: int) -> int:
@@ -39,7 +75,20 @@ def binomial_coefficient_rec(n: int, k: int) -> int:
     :raise ValueError: если n или k отрицательные либо n меньше k
     :return: значение биномиального коэффициента
     """
-    pass
+    _validate_binomial_args(n, k)
+    memo: dict[tuple[int, int], int] = {}
+
+    def calculate(current_n: int, current_k: int) -> int:
+        if current_k == 0 or current_k == current_n:
+            return 1
+        key = (current_n, current_k)
+        if key not in memo:
+            memo[key] = calculate(current_n - 1, current_k - 1) + calculate(
+                current_n - 1, current_k
+            )
+        return memo[key]
+
+    return calculate(n, k)
 
 
 def main():
