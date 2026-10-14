@@ -5,6 +5,23 @@ NEGATIVE_VALUE_TEMPL = "Параметр {0} отрицательный"
 N_LESS_THAN_K_ERROR_MSG = "Параметр n меньше чем k"
 
 
+def _is_valid_int(value) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool)
+
+
+def _check_binomial_params(n: int, k: int) -> None:
+    if not _is_valid_int(n):
+        raise TypeError(NOT_INT_VALUE_TEMPL.format("n"))
+    if not _is_valid_int(k):
+        raise TypeError(NOT_INT_VALUE_TEMPL.format("k"))
+    if n < 0:
+        raise ValueError(NEGATIVE_VALUE_TEMPL.format("n"))
+    if k < 0:
+        raise ValueError(NEGATIVE_VALUE_TEMPL.format("k"))
+    if n < k:
+        raise ValueError(N_LESS_THAN_K_ERROR_MSG)
+
+
 def get_triangle_path_count(length: int) -> int:
     """Возвращает число замкнутых маршрутов заданной длины
     из вершины A в вершину A треугольника ABC.
