@@ -8,7 +8,6 @@ N_LESS_THAN_K_ERROR_MSG = "Параметр n меньше чем k"
 def _is_valid_int(value) -> bool:
     return isinstance(value, int) and not isinstance(value, bool)
 
-
 def _check_binomial_params(n: int, k: int) -> None:
     if not _is_valid_int(n):
         raise TypeError(NOT_INT_VALUE_TEMPL.format("n"))
@@ -20,7 +19,6 @@ def _check_binomial_params(n: int, k: int) -> None:
         raise ValueError(NEGATIVE_VALUE_TEMPL.format("k"))
     if n < k:
         raise ValueError(N_LESS_THAN_K_ERROR_MSG)
-
 
 def get_triangle_path_count(length: int) -> int:
     """Возвращает число замкнутых маршрутов заданной длины
@@ -43,7 +41,11 @@ def binomial_coefficient_iter(n: int, k: int) -> int:
     :raise ValueError: если n или k отрицательные либо n меньше k
     :return: значение биномиального коэффициента
     """
-    pass
+    _check_binomial_params(n, k)
+    result = 1
+    for i in range(1, k + 1):
+        result = result * (n - k + i) // i
+    return result
 
 
 def binomial_coefficient_rec(n: int, k: int) -> int:
