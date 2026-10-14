@@ -69,7 +69,12 @@ class KnapsackAbstractSolver(ABC):
 
         :param selected_items: для каждого предмета True, если он в наборе
         """
-        pass
+        total_weight = 0
+        for item_idx in range(self.item_cnt):
+            if selected_items[item_idx]:
+                total_weight += self._weights[item_idx]
+
+        return total_weight
 
     def get_cost(self, selected_items: list[bool]) -> int:
         """Возвращает суммарную стоимость выбранных предметов.
@@ -78,14 +83,44 @@ class KnapsackAbstractSolver(ABC):
 
         :param selected_items: для каждого предмета True, если он в наборе
         """
-        pass
+        if self.get_weight(selected_items) > self._weight_limit:
+            return 0
+
+        total_cost = 0
+        for item_idx in range(self.item_cnt):
+            if selected_items[item_idx]:
+                total_cost += self._costs[item_idx]
+
+        return total_cost
 
     def _validate_params(
         self, weights: list[int], costs: list[int], weight_limit: int
     ) -> None:
         """Проверяет входные данные задачи о рюкзаке."""
-        pass
+        self._validate_list(weights, WEIGHTS)
+        self._validate_list(costs, COSTS)
+
+        if len(weights) != len(costs):
+            raise ValueError(LENGTHS_NOT_EQUAL)
+
+        if not isinstance(weight_limit, int) or isinstance(weight_limit, bool):
+            raise TypeError(NOT_INT_WEIGHT_LIMIT)
+        if weight_limit < 1:
+            raise ValueError(NOT_POS_WEIGHT_LIMIT)
+        if weight_limit < min(weights):
+            raise ValueError(LESS_WEIGHT_LIMIT)
 
     def _validate_list(self, items: list[int], list_name: str) -> None:
         """Проверяет список весов или стоимостей."""
-        pass
+        if not isinstance(items, list):
+            raise TypeError(NOT_LIST.format(list_name))
+        if len(items) == 0:
+            raise ValueError(EMPTY_LIST.format(list_name))
+
+        for value in items:
+            if not isinstance(value, int) or isinstance(value, bool):
+                raise TypeError(NOT_INT.format(list_name))
+
+        for value in items:
+            if value <= 0:
+                raise ValueError(NOT_POS.format(list_name))
