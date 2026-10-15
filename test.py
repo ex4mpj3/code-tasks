@@ -23,10 +23,40 @@ class TestTridiagonalDeterminant(unittest.TestCase):
         matrix = [[1, 2, 0, 0], [3, 1, 2, 0], [0, 3, 1, 2]]
         self.assertRaises(Exception, get_tridiagonal_determinant, matrix)
 
+    def test_not_integer(self):
+        """Проверяет, что функция выбрасывает исключение, если элемент
+        матрицы не целое число"""
+        matrix = [[1.0, 2, 0], [3, 1, 2], [0, 3, 1]]
+        self.assertRaises(Exception, get_tridiagonal_determinant, matrix)
+
+    def test_rows_different_length(self):
+        """Проверяет, что функция выбрасывает исключение, если строки
+        матрицы разной длины"""
+        matrix = [[1, 2, 0], [3, 1], [0, 3, 1]]
+        self.assertRaises(Exception, get_tridiagonal_determinant, matrix)
+
     def test_not_tridiag_replace_zero(self):
         """Проверяет, что функция выбрасывает исключение при передаче
         матрицы с ненулевым элементом вне трёх диагоналей"""
         matrix = [[1, 2, 0, 7], [3, 1, 2, 0], [0, 3, 1, 2], [0, 0, 3, 1]]
+        self.assertRaises(Exception, get_tridiagonal_determinant, matrix)
+
+    def test_different_main_diagonal(self):
+        """Проверяет, что функция выбрасывает исключение, если на главной
+        диагонали разные числа"""
+        matrix = [[1, 2, 0], [3, 5, 2], [0, 3, 1]]
+        self.assertRaises(Exception, get_tridiagonal_determinant, matrix)
+
+    def test_different_super_diagonal(self):
+        """Проверяет, что функция выбрасывает исключение, если на
+        наддиагонали разные числа"""
+        matrix = [[1, 2, 0], [3, 1, 7], [0, 3, 1]]
+        self.assertRaises(Exception, get_tridiagonal_determinant, matrix)
+
+    def test_different_sub_diagonal(self):
+        """Проверяет, что функция выбрасывает исключение, если на
+        поддиагонали разные числа"""
+        matrix = [[1, 2, 0], [3, 1, 2], [0, 8, 1]]
         self.assertRaises(Exception, get_tridiagonal_determinant, matrix)
 
     def test_first_order(self):
