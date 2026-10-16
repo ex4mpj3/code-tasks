@@ -8,9 +8,9 @@ NEGATIVE_VALUE_TEMPL = "Параметр {0} отрицательный"
 N_LESS_THAN_K_ERROR_MSG = "Параметр n меньше чем k"
 
 
-def validate(n: Any, k: Any) -> None:
+def _validate_bin(n: Any, k: Any) -> None:
     """Проводит валидацию для функций, работающих с биноминальным коэффициентом,
-     вызывает ошибку при некорректных входящих данных"""
+    вызывает ошибку при некорректных входящих данных"""
     for name, val in (("n", n), ("k", k)):
         if type(val) is not int:
             raise TypeError(NOT_INT_VALUE_TEMPL.format(name))
@@ -19,6 +19,37 @@ def validate(n: Any, k: Any) -> None:
 
     if n < k:
         raise ValueError(N_LESS_THAN_K_ERROR_MSG)
+
+
+def _validate_str(length: Any) -> None:
+    """Валидация длины строки"""
+    if type(length) is not int:
+        raise TypeError(LENGTH_NOT_INT)
+    if length < 1:
+        raise ValueError(LENGTH_NOT_POS)
+
+
+@cache
+def _bin_recursion(n: int, k: int) -> int:
+    """Внутренний блок рекурсии для вычисления бин коэффициента"""
+    if k in (0, n):
+        return 1
+    return _bin_recursion(n - 1, k - 1) + _bin_recursion(n - 1, k)
+
+
+def _starts_with_0(n: int) -> list[str]:
+    """Генерирует строки длины n, начинающиеся с 0"""
+    if n == 1:
+        return ["0"]
+    return ["0" + s for s in _starts_with_1(n - 1)]
+
+
+def _starts_with_1(n: int) -> list[str]:
+    """Генерирует строки длины n, начинающиеся с 1"""
+    if n == 1:
+        return ["1"]
+    tails = _starts_with_0(n - 1) + _starts_with_1(n - 1)
+    return ["1" + s for s in tails]
 
 
 def generate_strings(length: int) -> list[str]:
@@ -30,24 +61,7 @@ def generate_strings(length: int) -> list[str]:
     :raise ValueError: если length меньше единицы
     :return: список строк
     """
-    if type(length) is not int:
-        raise TypeError(LENGTH_NOT_INT)
-    if length < 1:
-        raise ValueError(LENGTH_NOT_POS)
-
-    def _starts_with_0(n: int) -> list[str]:
-        """Генерирует строки длины n, начинающиеся с 0"""
-        if n == 1:
-            return ["0"]
-        return ["0" + s for s in _starts_with_1(n - 1)]
-
-    def _starts_with_1(n: int) -> list[str]:
-        """Генерирует строки длины n, начинающиеся с 1"""
-        if n == 1:
-            return ["1"]
-        tails = _starts_with_0(n - 1) + _starts_with_1(n - 1)
-        return ["1" + s for s in tails]
-
+    _validate_str(length)
     return _starts_with_0(length) + _starts_with_1(length)
 
 
@@ -60,7 +74,7 @@ def binomial_coefficient_iter(n: int, k: int) -> int:
     :raise ValueError: если n или k отрицательные либо n меньше k
     :return: значение биномиального коэффициента
     """
-    validate(n, k)
+    _validate_bin(n, k)
     if k in (0, n):
         return 1
     # Оптимизация на основе свойства зеркальности биноминальных коэффициентов
@@ -82,15 +96,8 @@ def binomial_coefficient_rec(n: int, k: int) -> int:
     :raise ValueError: если n или k отрицательные либо n меньше k
     :return: значение биномиального коэффициента
     """
-    validate(n, k)
-
-    @cache
-    def _inner_recursion(n: int, k: int) -> int:
-        if k in (0, n):
-            return 1
-        return _inner_recursion(n - 1, k - 1) + _inner_recursion(n - 1, k)
-
-    return _inner_recursion(n, k)
+    _validate_bin(n, k)
+    return _bin_recursion(n, k)
 
 
 def main():
