@@ -16,7 +16,7 @@ def get_min_cost_path(price_table: list[list[float | int]]) -> Result:
     :raise ValueError: если таблица пустая или непрямоугольная
     :return: Result со стоимостью и списком индексов (строка, столбец)
     """
-    pass
+
 
 
 def main():
