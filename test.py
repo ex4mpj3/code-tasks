@@ -95,6 +95,25 @@ class TestMinCostPath(unittest.TestCase):
             Result(cost=6, path=[(0, 0), (0, 1), (0, 2), (1, 2)]),
         )
 
+    def test_single_row(self):
+        """Один строка, только вправо"""
+        self.assertEqual(
+            get_min_cost_path([[1, 2, 3]]),
+            Result(cost=6, path=[(0, 0), (0, 1), (0, 2)]),
+        )
 
+    def test_single_column(self):
+        """Одна столбец, только вниз"""
+        self.assertEqual(
+            get_min_cost_path([[1], [2], [3]]),
+            Result(cost=6, path=[(0, 0), (1, 0), (2, 0)]),
+        )
+
+    def test_equal_paths(self):
+        """Два пути с одинаковой стоимостью"""
+        table = [[1, 1 ], [1, 1]]
+        result = get_min_cost_path(table)
+        self.assertEqual(result.cost, 3)
+ 
 if __name__ == "__main__":
     unittest.main()
