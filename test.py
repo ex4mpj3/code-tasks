@@ -113,7 +113,7 @@ class TestMinCostPath(unittest.TestCase):
         """Два пути с одинаковой стоимостью"""
         table = [[1, 1], [1, 1]]
         result = get_min_cost_path(table)
-        self.assertEqual(result.cost, 3)
+        _assert_optimal_result(self, table, result, 3)
 
 
 if __name__ == "__main__":
