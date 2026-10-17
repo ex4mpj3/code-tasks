@@ -85,8 +85,9 @@ def get_min_cost_path(price_table: list[list[float | int]]) -> Result:
 
 def main():
     table = [[1, 2, 2], [3, 4, 2], [1, 1, 2]]
-    print(build_cost_table(table))
-    print(get_min_cost_path(table))
+    print("Таблица цен:", table)
+    print("Таблица минимальных стоимостей:", build_cost_table(table))
+    print("Результат:", get_min_cost_path(table))
 
 
 if __name__ == "__main__":
