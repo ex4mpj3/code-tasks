@@ -111,9 +111,10 @@ class TestMinCostPath(unittest.TestCase):
 
     def test_equal_paths(self):
         """Два пути с одинаковой стоимостью"""
-        table = [[1, 1 ], [1, 1]]
+        table = [[1, 1], [1, 1]]
         result = get_min_cost_path(table)
         self.assertEqual(result.cost, 3)
- 
+
+
 if __name__ == "__main__":
     unittest.main()
