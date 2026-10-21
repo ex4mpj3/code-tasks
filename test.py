@@ -1,4 +1,6 @@
+import random
 import unittest
+from itertools import product
 
 from main import ErrorMessages, ProfitValueError, get_invest_distribution
 
@@ -86,6 +88,89 @@ class TestInvestDistribution(unittest.TestCase):
         ]
         result = get_invest_distribution(matrix)
         _assert_optimal_result(self, matrix, result, 73)
+
+    def test_not_list(self):
+        """Аргумент не список"""
+        with self.assertRaises(TypeError) as error:
+            get_invest_distribution((1, 2))
+        self.assertEqual(str(error.exception), ErrorMessages.TABLE_NOT_NUMBERS)
+
+    def test_row_not_list(self):
+        """Строка таблицы не список"""
+        with self.assertRaises(TypeError) as error:
+            get_invest_distribution([[1, 2], (3, 4)])
+        self.assertEqual(str(error.exception), ErrorMessages.TABLE_NOT_NUMBERS)
+
+    def test_string_value(self):
+        """В клетке строка"""
+        with self.assertRaises(TypeError) as error:
+            get_invest_distribution([[1, "2"]])
+        self.assertEqual(str(error.exception), ErrorMessages.TABLE_NOT_NUMBERS)
+
+    def test_empty_row(self):
+        """Таблица из пустой строки"""
+        with self.assertRaises(ValueError) as error:
+            get_invest_distribution([[]])
+        self.assertEqual(str(error.exception), ErrorMessages.TABLE_NOT_RECT)
+
+    def test_not_rect(self):
+        """Строки разной длины"""
+        with self.assertRaises(ValueError) as error:
+            get_invest_distribution([[1, 2], [3]])
+        self.assertEqual(str(error.exception), ErrorMessages.TABLE_NOT_RECT)
+
+    def test_negative_profit_position(self):
+        """Отрицательная прибыль в нижней строке"""
+        with self.assertRaises(ProfitValueError) as error:
+            get_invest_distribution([[0, 0], [0, 0], [-2, 5]])
+        self.assertEqual(str(error.exception), ErrorMessages.NEG_PROFIT)
+        self.assertEqual(error.exception.project_idx, 0)
+        self.assertEqual(error.exception.row_idx, 2)
+
+    def test_equal_profit_allowed(self):
+        """Неубывание: равные значения в столбце допустимы"""
+        matrix = [[5, 1], [5, 1], [5, 1]]
+        result = get_invest_distribution(matrix)
+        _assert_optimal_result(self, matrix, result, 6)
+
+    def test_all_zero(self):
+        """Нулевая прибыль"""
+        matrix = [[0, 0], [0, 0]]
+        result = get_invest_distribution(matrix)
+        _assert_optimal_result(self, matrix, result, 0)
+
+    def test_one_project(self):
+        """Один проект: все лоты в него"""
+        matrix = [[1], [4], [9]]
+        result = get_invest_distribution(matrix)
+        self.assertEqual(result.distribution, [3])
+        _assert_optimal_result(self, matrix, result, 9)
+
+    def test_one_level(self):
+        """Один лот: в проект с наибольшей прибылью"""
+        matrix = [[3, 7, 5]]
+        result = get_invest_distribution(matrix)
+        self.assertEqual(result.distribution, [0, 1, 0])
+        _assert_optimal_result(self, matrix, result, 7)
+
+    def test_brute_force(self):
+        """Сравнение с полным перебором на случайных таблицах"""
+        rng = random.Random(42)
+        for _ in range(200):
+            levels = rng.randint(1, 5)
+            projects = rng.randint(1, 4)
+            columns = [
+                sorted(rng.randint(0, 30) for _ in range(levels))
+                for _ in range(projects)
+            ]
+            matrix = [list(row) for row in zip(*columns)]
+            best = max(
+                _realized_profit(matrix, plan)
+                for plan in product(range(levels + 1), repeat=projects)
+                if sum(plan) == levels
+            )
+            result = get_invest_distribution(matrix)
+            _assert_optimal_result(self, matrix, result, best)
 
 
 if __name__ == "__main__":
