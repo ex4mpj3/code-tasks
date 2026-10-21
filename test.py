@@ -105,6 +105,79 @@ class TestMinCostPath(unittest.TestCase):
             Result(cost=9, path=[(0, 0), (1, 0), (1, 1), (1, 2)]),
         )
 
+    def test_tuple_argument(self):
+        """Аргумент не является списком"""
+        with self.assertRaises(TypeError) as error:
+            get_min_cost_path(([1, 2],)) # type: ignore
+        self.assertEqual(str(error.exception), TABLE_NOT_LISTS)
+
+    def test_non_list_row(self):
+        """Строка таблицы не является списком"""
+        with self.assertRaises(TypeError) as error:
+            get_min_cost_path([[1, 2], (3, 4)]) # type: ignore
+        self.assertEqual(str(error.exception), TABLE_NOT_LISTS)
+
+    def test_object_value(self):
+        """В клетке объект неподдерживаемого типа"""
+        with self.assertRaises(TypeError) as error:
+            get_min_cost_path([[1, object()]]) # type: ignore
+        self.assertEqual(str(error.exception), CELL_NOT_NUMBER)
+
+    def test_empty_row(self):
+        """Таблица содержит пустую строку"""
+        with self.assertRaises(ValueError) as error:
+            get_min_cost_path([[]])
+        self.assertEqual(str(error.exception), TABLE_NOT_RECT)
+
+    def test_blocked_start(self):
+        """Стартовая клетка запрещена"""
+        table = [[None, 1], [2, 3]]
+        self.assertEqual(get_min_cost_path(table), Result(None, None))
+
+    def test_blocked_finish(self):
+        """Финишная клетка запрещена"""
+        table = [[1, 2], [3, None]]
+        self.assertEqual(get_min_cost_path(table), Result(None, None))
+
+    def test_single_row(self):
+        """Путь проходит по одной строке"""
+        table = [[2, 1, 3]]
+        self.assertEqual(
+            get_min_cost_path(table),
+            Result(cost=6, path=[(0, 0), (0, 1), (0, 2)]),
+        )
+
+    def test_single_row_no_path(self):
+        """Запрещённая клетка отрезает путь в одной строке"""
+        table = [[2, None, 3]]
+        self.assertEqual(get_min_cost_path(table), Result(None, None))
+
+    def test_single_column(self):
+        """Путь проходит по одному столбцу"""
+        table = [[2], [1], [3]]
+        self.assertEqual(
+            get_min_cost_path(table), # type: ignore
+            Result(cost=6, path=[(0, 0), (1, 0), (2, 0)]),
+        )
+
+    def test_negative_costs(self):
+        """В таблице есть отрицательные стоимости"""
+        table = [[1, -5, 2], [2, 1, 1]]
+        result = get_min_cost_path(table) # type: ignore
+        _assert_optimal_result(self, table, result, expected_cost=-2)
+
+    def test_multiple_optimal_paths(self):
+        """Несколько путей имеют одинаковую минимальную стоимость"""
+        table = [[1, 1], [1, 1]]
+        result = get_min_cost_path(table) # type: ignore
+        _assert_optimal_result(self, table, result, expected_cost=3)
+
+    def test_float_values(self):
+        """В таблице используются вещественные числа"""
+        table = [[0.5, 1.25], [2.0, 0.25]]
+        result = get_min_cost_path(table) # type: ignore
+        _assert_optimal_result(self, table, result, expected_cost=2.0)
+
 
 if __name__ == "__main__":
     unittest.main()
