@@ -27,7 +27,45 @@ def coin_change(coins: list[int], amount: int) -> Result:
     :raise ValueError: если список пуст, сумма отрицательная или номинал не больше 0
     :return: Result с полями count и combination либо Result(None, None)
     """
-    pass
+    if not isinstance(coins, list):
+        raise TypeError(ErrorMessages.COINS_NOT_LIST)
+    if not isinstance(amount, int) or isinstance(amount, bool):
+        raise TypeError(ErrorMessages.AMOUNT_NOT_INT)
+    if not coins:
+        raise ValueError(ErrorMessages.WRONG_COINS)
+    if amount < 0:
+        raise ValueError(ErrorMessages.WRONG_AMOUNT)
+
+    for coin in coins:
+        if not isinstance(coin, int) or isinstance(coin, bool):
+            raise TypeError(ErrorMessages.COIN_NOT_INT)
+        if coin <= 0:
+            raise ValueError(ErrorMessages.NEGATIVE_COIN)
+
+    min_coins = [INF] * (amount + 1)
+    last_coin = [None] * (amount + 1)
+    min_coins[0] = 0
+
+    for current_amount in range(1, amount + 1):
+        for coin in coins:
+            if (
+                coin <= current_amount
+                and min_coins[current_amount - coin] + 1 < min_coins[current_amount]
+            ):
+                min_coins[current_amount] = min_coins[current_amount - coin] + 1
+                last_coin[current_amount] = coin
+
+    if min_coins[amount] == INF:
+        return Result(None, None)
+
+    combination = []
+    remaining = amount
+    while remaining > 0:
+        coin = last_coin[remaining]
+        combination.append(coin)
+        remaining -= coin
+
+    return Result(min_coins[amount], combination)
 
 
 def main():
