@@ -106,5 +106,64 @@ class TestMinCostPath(unittest.TestCase):
         )
 
 
+    def test_not_list_argument(self):
+        """Число вместо таблицы"""
+        with self.assertRaises(TypeError) as error:
+            get_min_cost_path(42)
+        self.assertEqual(str(error.exception), TABLE_NOT_LISTS)
+
+
+    def test_not_list_row(self):
+        """Строка-кортеж недопустима"""
+        with self.assertRaises(TypeError) as error:
+            get_min_cost_path([[1], (2,)])
+        self.assertEqual(str(error.exception), TABLE_NOT_LISTS)
+
+
+    def test_empty_rows(self):
+        """Таблица с пустой строкой"""
+        with self.assertRaises(ValueError) as error:
+            get_min_cost_path([[]])
+        self.assertEqual(str(error.exception), TABLE_NOT_RECT)
+
+
+    def test_blocked_start(self):
+        """Закрыта стартовая клетка"""
+        self.assertEqual(get_min_cost_path([[None, 1], [1, 1]]), Result(None, None))
+
+
+    def test_blocked_finish(self):
+        """Закрыта конечная клетка"""
+        self.assertEqual(get_min_cost_path([[1, 1], [1, None]]), Result(None, None))
+
+
+    def test_single_row(self):
+        """Двигаться можно только вправо"""
+        self.assertEqual(
+            get_min_cost_path([[2, 3, 4]]),
+            Result(9, [(0, 0), (0, 1), (0, 2)]),
+        )
+
+
+    def test_single_column(self):
+        """Двигаться можно только вниз"""
+        self.assertEqual(
+            get_min_cost_path([[2], [3], [4]]),
+            Result(9, [(0, 0), (1, 0), (2, 0)]),
+        )
+
+
+    def test_equal_cost_paths(self):
+        """При нескольких оптимальных путях достаточно одного"""
+        table = [[1, 1, 1], [1, 1, 1], [1, 1, 1]]
+        _assert_optimal_result(self, table, get_min_cost_path(table), 5)
+
+
+    def test_negative_costs(self):
+        """Стоимость клетки может быть отрицательной"""
+        table = [[2, -10, 1], [1, 100, 1], [1, 1, 1]]
+        _assert_optimal_result(self, table, get_min_cost_path(table), -5)
+
+
 if __name__ == "__main__":
     unittest.main()
