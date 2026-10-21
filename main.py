@@ -8,7 +8,6 @@ Result = namedtuple("Result", ["cost", "path"])
 
 
 def _validate_table(price_table):
-    """Проверяет правильность таблицы цен."""
     if not isinstance(price_table, list):
         raise TypeError(TABLE_NOT_NUMBERS)
 
