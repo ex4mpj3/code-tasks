@@ -94,7 +94,7 @@ class TestCoinChange(unittest.TestCase):
     def test_bool_coin(self):
         """Логическое значение не является номиналом"""
         with self.assertRaises(TypeError) as error:
-                coin_change([1, False, 5], 10)
+            coin_change([1, False, 5], 10)
         self.assertEqual(str(error.exception), ErrorMessages.COIN_NOT_INT)
 
     def test_greedy_not_optimal(self):

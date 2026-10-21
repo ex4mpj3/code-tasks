@@ -31,11 +31,11 @@ def coin_change(coins: list[int], amount: int) -> Result:
         raise TypeError(ErrorMessages.COINS_NOT_LIST)
     if not isinstance(amount, int) or isinstance(amount, bool):
         raise TypeError(ErrorMessages.AMOUNT_NOT_INT)
-    
+
     for coin in coins:
-            if not isinstance(coin, int) or isinstance(coin, bool):
-                raise TypeError(ErrorMessages.COIN_NOT_INT)
-    
+        if not isinstance(coin, int) or isinstance(coin, bool):
+            raise TypeError(ErrorMessages.COIN_NOT_INT)
+
     if not coins:
         raise ValueError(ErrorMessages.WRONG_COINS)
     if amount < 0:
