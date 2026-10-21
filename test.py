@@ -44,10 +44,34 @@ class TestInvestDistributions(unittest.TestCase):
             get_invest_distributions([[1, True]])
         self.assertEqual(str(error.exception), ErrorMessages.TABLE_NOT_NUMBERS)
 
+    def test_not_list_of_lists(self):
+        """Список чисел вместо списка списков"""
+        with self.assertRaises(TypeError) as error:
+            get_invest_distributions([1, 2, 3])
+        self.assertEqual(str(error.exception), ErrorMessages.TABLE_NOT_NUMBERS)
+
+    def test_string_value(self):
+        """В клетке строка"""
+        with self.assertRaises(TypeError) as error:
+            get_invest_distributions([[1, "2"]])
+        self.assertEqual(str(error.exception), ErrorMessages.TABLE_NOT_NUMBERS)
+
     def test_empty(self):
         """Пустой список"""
         with self.assertRaises(ValueError) as error:
             get_invest_distributions([])
+        self.assertEqual(str(error.exception), ErrorMessages.TABLE_NOT_RECT)
+
+    def test_empty_rows(self):
+        """Список с пустыми строками"""
+        with self.assertRaises(ValueError) as error:
+            get_invest_distributions([[], []])
+        self.assertEqual(str(error.exception), ErrorMessages.TABLE_NOT_RECT)
+
+    def test_jagged_matrix(self):
+        """Непрямоугольная матрица (строки разной длины)"""
+        with self.assertRaises(ValueError) as error:
+            get_invest_distributions([[1, 2], [3, 4, 5]])
         self.assertEqual(str(error.exception), ErrorMessages.TABLE_NOT_RECT)
 
     def test_negative_profit(self):
@@ -72,6 +96,24 @@ class TestInvestDistributions(unittest.TestCase):
         matrix = [[1]]
         result = get_invest_distributions(matrix)
         _assert_all_optima(self, matrix, result, 1, 1)
+
+    def test_one_project_multiple_lots(self):
+        """Один проект и несколько лотов"""
+        matrix = [[2], [5], [9]]
+        result = get_invest_distributions(matrix)
+        _assert_all_optima(self, matrix, result, 9, 1)
+
+    def test_one_lot_multiple_projects(self):
+        """Один лот и несколько проектов с двумя максимумами"""
+        matrix = [[4, 7, 7, 2]]
+        result = get_invest_distributions(matrix)
+        _assert_all_optima(self, matrix, result, 7, 2)
+
+    def test_zero_profits(self):
+        """Нулевая прибыль: 2 лота по 2 проектам дают 3 плана"""
+        matrix = [[0, 0], [0, 0]]
+        result = get_invest_distributions(matrix)
+        _assert_all_optima(self, matrix, result, 0, 3)
 
     def test_float_profit(self):
         """Прибыль задана числами float"""
