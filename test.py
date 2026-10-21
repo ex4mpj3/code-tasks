@@ -85,6 +85,40 @@ class TestCoinChange(unittest.TestCase):
         """Один номинал"""
         self.assertEqual(coin_change([2], 8), Result(4, [2, 2, 2, 2]))
 
+    def test_bool_amount(self):
+        """Логическое значение не является целой суммой"""
+        with self.assertRaises(TypeError) as error:
+            coin_change([1, 2, 5], True)
+        self.assertEqual(str(error.exception), ErrorMessages.AMOUNT_NOT_INT)
+
+    def test_bool_coin(self):
+        """Логическое значение не является номиналом"""
+        with self.assertRaises(TypeError) as error:
+                coin_change([1, False, 5], 10)
+        self.assertEqual(str(error.exception), ErrorMessages.COIN_NOT_INT)
+
+    def test_greedy_not_optimal(self):
+        """Оптимальный набор отличается от жадного решения"""
+        coins = [1, 4, 6]
+        result = coin_change(coins, 8)
+        _assert_valid_change(self, coins, 8, result, 2)
+
+    def test_no_one_coin(self):
+        """Сумму можно оставить без номинала 1"""
+        coins = [4, 6]
+        result = coin_change(coins, 14)
+        _assert_valid_change(self, coins, 14, result, 3)
+
+    def test_zero_amount_invalid_coin(self):
+        """Номиналы при нулевой сумме"""
+        with self.assertRaises(ValueError) as error:
+            coin_change([0], 0)
+        self.assertEqual(str(error.exception), ErrorMessages.NEGATIVE_COIN)
+
+    def test_smaller_than_all_coins(self):
+        """Сумма меньше любого номинала"""
+        self.assertEqual(coin_change([5, 7], 3), Result(None, None))
+
 
 if __name__ == "__main__":
     unittest.main()
